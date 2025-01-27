@@ -10,12 +10,12 @@ export function createGetter(path) {
     let value = obj;
 
     for (const prop of props) {
-      if (value[prop] === undefined || typeof value[prop] === "function") {
-        return undefined;
-      }
-
       if (value[prop] === null) {
         return null;
+      }
+
+      if (!value.hasOwnProperty(prop)) {
+        return;
       }
 
       value = value[prop];
