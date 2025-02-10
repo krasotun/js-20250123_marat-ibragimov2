@@ -48,16 +48,16 @@ export default class NotificationMessage {
 
     NotificationMessage.lastShownComponent = this;
 
-    this.remove();
-  }
-
-  destroy() {
-    this.element.remove();
-  }
-
-  remove() {
     setTimeout(() => {
       this.destroy();
     }, this.duration);
+  }
+
+  remove() {
+    this.element.remove();
+  }
+
+  destroy() {
+    this.remove();
   }
 }
