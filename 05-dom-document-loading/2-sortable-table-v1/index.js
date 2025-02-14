@@ -122,9 +122,9 @@ export default class SortableTable {
   sort(fieldValue, orderValue) {
     this.orderValue = orderValue;
 
-    const { sortable, sortType } = this.headerConfig.filter(
+    const { sortable, sortType } = this.headerConfig.find(
       (cell) => cell.id === fieldValue
-    )[0];
+    );
 
     if (!sortable) {
       return;
