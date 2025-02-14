@@ -10,9 +10,16 @@ export default class SortableTable {
     this.init();
   }
 
+  selectSubElements() {
+    this.element.querySelectorAll("[data-element]").forEach((element) => {
+      this.subElements[element.dataset.element] = element;
+    });
+  }
+
   init() {
     this.element = this.createElement();
     this.renderTable();
+    this.selectSubElements();
   }
 
   update() {
@@ -20,6 +27,7 @@ export default class SortableTable {
     if (currentTable) {
       currentTable.remove();
       this.renderTable();
+      this.selectSubElements();
     }
   }
 
