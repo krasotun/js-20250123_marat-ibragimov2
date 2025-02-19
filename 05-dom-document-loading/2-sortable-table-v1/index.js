@@ -207,6 +207,7 @@ export default class SortableTableV1 {
     if (sortType === "number") {
       this.data = sortNumbers(this.data, orderValue);
     }
+
     this.update();
   }
 
