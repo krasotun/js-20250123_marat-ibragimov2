@@ -1,4 +1,4 @@
-export default class SortableTable {
+export default class SortableTableV1 {
   orderValue = null;
 
   subElements = {};
@@ -23,10 +23,19 @@ export default class SortableTable {
   }
 
   update() {
-    const currentTable = this.element.querySelector(".sortable-table");
-    if (currentTable) {
-      currentTable.remove();
-      this.renderTable();
+    const currentTableBobyElement = this.element.querySelector(
+      "[data-element='body']"
+    );
+
+    if (currentTableBobyElement) {
+      currentTableBobyElement.remove();
+
+      const newTableBodyElement = this.createTableBodyElement();
+
+      const currentTable = document.querySelector(".sortable-table");
+
+      currentTable.append(newTableBodyElement);
+
       this.selectSubElements();
     }
   }
@@ -39,42 +48,66 @@ export default class SortableTable {
   }
 
   renderTable() {
-    this.element.appendChild(this.createTable());
+    this.element.append(this.createTableElement());
   }
 
-  createTable() {
+  createTableElement() {
     const tableElement = document.createElement("div");
     tableElement.classList.add("sortable-table");
 
-    const tableTemplate = this.createTableTemplate("desc");
-
-    tableElement.innerHTML = tableTemplate;
-
-    const body = tableElement.querySelector(".sortable-table__body");
-
-    this.subElements.body = body;
+    tableElement.append(this.createTableHeaderElement());
+    tableElement.append(this.createTableBodyElement());
 
     return tableElement;
   }
 
-  createTableTemplate() {
+  createTableHeaderElement() {
+    const tableHeaderElement = document.createElement("div");
+    tableHeaderElement.classList.add(
+      "sortable-table__header",
+      "sortable-table__row"
+    );
+    tableHeaderElement.dataset.element = "header";
+
+    tableHeaderElement.innerHTML = this.createTableHeaderTemplate();
+
+    return tableHeaderElement;
+  }
+
+  createTableBodyElement() {
+    const tableBodyElement = document.createElement("div");
+    tableBodyElement.classList.add("sortable-table__body");
+    tableBodyElement.dataset.element = "body";
+
+    tableBodyElement.innerHTML = this.createTableBodyTemplate();
+
+    return tableBodyElement;
+  }
+
+  createArrowElement() {
+    const arrowElement = document.createElement("span");
+    arrowElement.classList.add("sortable-table__sort-arrow");
+    arrowElement.dataset.element = "arrow";
+
+    arrowElement.innerHTML = this.createArrowTemplate();
+
+    return arrowElement;
+  }
+
+  createArrowTemplate() {
     return `
-      <div data-element="header" class="sortable-table__header sortable-table__row">
+        <span class="sort-arrow"></span>
+    `;
+  }
+
+  createTableHeaderTemplate() {
+    return `
         ${this.headerConfig
           .map((headerCell) => {
             return `
-                  <div class="sortable-table__cell" data-id="${
-                    headerCell.id
-                  }"data-sortable="${headerCell.sortable}" ${
-              this.orderValue ? `data-order=${this.orderValue}` : ""
+                  <div class="sortable-table__cell" data-id="${headerCell.id}"data-sortable="${headerCell.sortable}"
             }  >
                     <span>${headerCell.title}</span>
-                    ${
-                      headerCell.sortable
-                        ? '<span data-element="arrow" class="sortable-table__sort-arrow"><span class="sort-arrow"></span></span>'
-                        : ""
-                    }
-
                   </div>
             `;
           })
@@ -82,8 +115,11 @@ export default class SortableTable {
             acc += curr;
             return acc;
           }, "")}
-      </div>
-     <div data-element="body" class="sortable-table__body">
+      `;
+  }
+
+  createTableBodyTemplate() {
+    return `
           ${this.data
             .map((el) => {
               return `
@@ -114,7 +150,6 @@ export default class SortableTable {
               acc += curr;
               return acc;
             }, "")}
-        </div>
 
       `;
   }
@@ -129,6 +164,15 @@ export default class SortableTable {
     if (!sortable) {
       return;
     }
+
+    const currentHeaderCell = document.querySelector(`[data-id=${fieldValue}`);
+    currentHeaderCell.dataset.order = orderValue;
+
+    const arrowElement =
+      document.querySelector("[data-element='arrow']") ??
+      this.createArrowElement();
+
+    currentHeaderCell.append(arrowElement);
 
     const sortNumbers = (arr, orderValue) => {
       const ascComparator = (a, b) => a[fieldValue] - b[fieldValue];
