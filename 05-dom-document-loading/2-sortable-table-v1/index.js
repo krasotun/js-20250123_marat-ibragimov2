@@ -129,10 +129,7 @@ export default class SortableTableV1 {
                   </div>
             `;
           })
-          .reduce((acc, curr) => {
-            acc += curr;
-            return acc;
-          }, "")}
+          .join("")}
       `;
   }
 
@@ -164,10 +161,7 @@ export default class SortableTableV1 {
              </a>
                 `;
             })
-            .reduce((acc, curr) => {
-              acc += curr;
-              return acc;
-            }, "")}
+            .join("")}
 
       `;
   }
