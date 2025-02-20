@@ -11,9 +11,19 @@ export default class SortableTableV2 extends SortableTableV1 {
     this.createListeners();
   }
 
-  handleHeaderCellClick(evt) {
-    console.log(evt.target);
-  }
+  handleHeaderCellClick = (evt) => {
+    const cellElement = evt.target.closest(".sortable-table__cell");
+
+    if (!cellElement) {
+      return;
+    }
+
+    const sortField = cellElement.dataset.id;
+    const sortOrder = cellElement.dataset.order === "desc" ? "asc" : "desc";
+    cellElement.dataset.order = sortOrder;
+
+    this.sort(sortField, sortOrder);
+  };
 
   sort(fieldValue, orderValue) {
     if (this.isSortLocally) {
@@ -25,6 +35,10 @@ export default class SortableTableV2 extends SortableTableV1 {
 
   sortOnClient(fieldValue, orderValue) {
     super.sort(fieldValue, orderValue);
+  }
+
+  sortOnServer() {
+    console.log("Not implemented");
   }
 
   createListeners() {
