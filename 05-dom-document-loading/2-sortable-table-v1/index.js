@@ -1,13 +1,19 @@
 export default class SortableTableV1 {
+  fieldValue = null;
   orderValue = null;
+  arrowElement = null;
 
   subElements = {};
 
   constructor(headerConfig = [], data = []) {
     this.headerConfig = headerConfig;
     this.data = data;
+    this.arrowElement = this.createArrowElement();
 
-    this.init();
+    this.element = this.createElement();
+
+    this.renderTable();
+    this.selectSubElements();
   }
 
   selectSubElements() {
@@ -16,13 +22,25 @@ export default class SortableTableV1 {
     });
   }
 
-  init() {
-    this.element = this.createElement();
-    this.renderTable();
-    this.selectSubElements();
-  }
-
   update() {
+    const headerCells = this.element.querySelectorAll(
+      ".sortable-table__header .sortable-table__cell"
+    );
+
+    if (headerCells) {
+      headerCells.forEach((cell) => cell.removeAttribute("data-order"));
+    }
+
+    const currentHeaderCell = this.element.querySelector(
+      `[data-id=${this.fieldValue}`
+    );
+
+    if (currentHeaderCell) {
+      currentHeaderCell.dataset.order = this.orderValue;
+
+      currentHeaderCell.append(this.arrowElement);
+    }
+
     const currentTableBobyElement = this.element.querySelector(
       "[data-element='body']"
     );
@@ -32,12 +50,12 @@ export default class SortableTableV1 {
 
       const newTableBodyElement = this.createTableBodyElement();
 
-      const currentTable = document.querySelector(".sortable-table");
+      const currentTable = this.element.querySelector(".sortable-table");
 
       currentTable.append(newTableBodyElement);
-
-      this.selectSubElements();
     }
+
+    this.selectSubElements();
   }
 
   createElement() {
@@ -155,6 +173,7 @@ export default class SortableTableV1 {
   }
 
   sort(fieldValue, orderValue) {
+    this.fieldValue = fieldValue;
     this.orderValue = orderValue;
 
     const { sortable, sortType } = this.headerConfig.find(
@@ -164,15 +183,6 @@ export default class SortableTableV1 {
     if (!sortable) {
       return;
     }
-
-    const currentHeaderCell = document.querySelector(`[data-id=${fieldValue}`);
-    currentHeaderCell.dataset.order = orderValue;
-
-    const arrowElement =
-      document.querySelector("[data-element='arrow']") ??
-      this.createArrowElement();
-
-    currentHeaderCell.append(arrowElement);
 
     const sortNumbers = (arr, orderValue) => {
       const ascComparator = (a, b) => a[fieldValue] - b[fieldValue];
