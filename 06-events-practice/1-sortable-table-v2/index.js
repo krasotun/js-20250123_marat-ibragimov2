@@ -5,10 +5,20 @@ export default class SortableTableV2 extends SortableTableV1 {
   constructor(headerConfig, { data = [], sorted = {} } = {}) {
     super(headerConfig, data);
     this.sorted = sorted;
+    this.renderArrowOnInit();
 
     this.sort(this.sorted.id, this.sorted.order);
 
     this.createListeners();
+  }
+
+  renderArrowOnInit() {
+    const targetHeaderCell = this.element.querySelector(
+      `[data-id=${this.sorted.id}`
+    );
+
+    targetHeaderCell.dataset.order = this.sorted.order;
+    targetHeaderCell.append(this.arrowElement);
   }
 
   handleHeaderCellClick = (evt) => {
@@ -19,6 +29,7 @@ export default class SortableTableV2 extends SortableTableV1 {
     }
 
     const sortField = cellElement.dataset.id;
+    console.log(cellElement.dataset.order);
     const sortOrder = cellElement.dataset.order === "desc" ? "asc" : "desc";
     cellElement.dataset.order = sortOrder;
 
@@ -43,14 +54,14 @@ export default class SortableTableV2 extends SortableTableV1 {
 
   createListeners() {
     this.subElements.header.addEventListener(
-      "click",
+      "pointerdown",
       this.handleHeaderCellClick
     );
   }
 
   destroyListeners() {
     this.subElements.header.removeEventListener(
-      "click",
+      "pointerdown",
       this.handleHeaderCellClick
     );
   }
