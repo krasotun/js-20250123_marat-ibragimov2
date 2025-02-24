@@ -32,7 +32,7 @@ export default class SortableTableV1 {
     }
 
     const currentHeaderCell = this.element.querySelector(
-      `[data-id=${this.fieldValue}`
+      `[data-id=${this.fieldValue}]`
     );
 
     if (currentHeaderCell) {
@@ -124,7 +124,7 @@ export default class SortableTableV1 {
           .map((headerCell) => {
             return `
                   <div class="sortable-table__cell" data-id="${headerCell.id}"data-sortable="${headerCell.sortable}"
-            }  >
+            >
                     <span>${headerCell.title}</span>
                   </div>
             `;

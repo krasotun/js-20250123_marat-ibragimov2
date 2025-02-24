@@ -17,8 +17,10 @@ export default class SortableTableV2 extends SortableTableV1 {
       `[data-id=${this.sorted.id}`
     );
 
-    targetHeaderCell.dataset.order = this.sorted.order;
-    targetHeaderCell.append(this.arrowElement);
+    if (targetHeaderCell) {
+      targetHeaderCell.dataset.order = this.sorted.order;
+      targetHeaderCell.append(this.arrowElement);
+    }
   }
 
   handleHeaderCellClick = (evt) => {
@@ -29,7 +31,7 @@ export default class SortableTableV2 extends SortableTableV1 {
     }
 
     const sortField = cellElement.dataset.id;
-    console.log(cellElement.dataset.order);
+
     const sortOrder = cellElement.dataset.order === "desc" ? "asc" : "desc";
     cellElement.dataset.order = sortOrder;
 
