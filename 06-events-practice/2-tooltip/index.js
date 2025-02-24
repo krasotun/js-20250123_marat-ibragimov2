@@ -12,12 +12,12 @@ class Tooltip {
 
   initialize() {
     this.createListeners();
+    this.createElement();
   }
 
-  createElement(textContent) {
+  createElement() {
     this.element = document.createElement("div");
     this.element.classList.add("tooltip");
-    this.element.textContent = textContent;
   }
 
   render(template) {
@@ -29,16 +29,21 @@ class Tooltip {
   createListeners() {
     document.addEventListener("pointerover", this.handleDocumentPointerover);
     document.addEventListener("pointerout", this.handleDocumentPointerout);
+    document.addEventListener("pointermove", this.handleDocumentPointermove);
   }
 
   removeListeners() {
     document.removeEventListener("pointerover", this.handleDocumentPointerover);
     document.removeEventListener("pointerout", this.handleDocumentPointerout);
+    document.removeEventListener("pointermove", this.handleDocumentPointermove);
+  }
+
+  moveTooltip(x, y) {
+    this.element.style.marginLeft = `${x}px`;
+    this.element.style.marginTop = `${y}px`;
   }
 
   handleDocumentPointerover = (evt) => {
-    console.log("over", evt.target);
-
     const shouldShowToolip = !!evt.target.dataset.tooltip;
 
     if (shouldShowToolip) {
@@ -46,14 +51,35 @@ class Tooltip {
         this.element.remove();
       }
 
-      this.createElement(evt.target.dataset.tooltip);
-      evt.target.append(this.element);
+      this.createElement();
+
+      const textContent = evt.target.dataset.tooltip;
+      this.element.textContent = textContent;
+
+      evt.target.prepend(this.element);
+
+      const { offsetX, offsetY } = evt;
+
+      this.moveTooltip(offsetX, offsetY);
     }
   };
 
-  handleDocumentPointerout = () => {
-    if (this.element) {
+  handleDocumentPointerout = (evt) => {
+    if (
+      this.element &&
+      this.element.textContent === evt.target.dataset.tooltip
+    ) {
       this.element.remove();
+    }
+  };
+
+  handleDocumentPointermove = (evt) => {
+    if (
+      this.element &&
+      this.element.textContent === evt.target.dataset.tooltip
+    ) {
+      const { offsetX, offsetY } = evt;
+      this.moveTooltip(offsetX, offsetY);
     }
   };
 
